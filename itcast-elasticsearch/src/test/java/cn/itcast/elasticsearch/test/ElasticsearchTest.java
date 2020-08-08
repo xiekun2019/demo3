@@ -6,11 +6,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -45,4 +47,31 @@ public class ElasticsearchTest {
                 "小米", 3599.00, "http://image.leyou.com/13123.jpg");
         this.itemRepository.save(item);
     }
+
+    @Test
+    public void testFind(){
+        // 根据id查询数据
+        /*Optional<Item> item = this.itemRepository.findById(1L);
+        System.out.println(item.get());*/
+        // 查询所有
+        Iterable<Item> items = this.itemRepository.findAll(Sort.by("price").descending());
+        items.forEach(System.out::println);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
