@@ -57,6 +57,30 @@ public class ElasticsearchTest {
         Iterable<Item> items = this.itemRepository.findAll(Sort.by("price").descending());
         items.forEach(System.out::println);
     }
+
+    @Test
+    public void findByTitle(){
+        List<Item> phones = this.itemRepository.findByTitle("手机");
+        phones.forEach(System.out::println);
+    }
+
+    @Test
+    public void findByPriceBetween(){
+        List<Item> phones = this.itemRepository.findByPriceBetween(3699d, 4499d);
+        phones.forEach(System.out::println);
+    }
+
+    @Test
+    public void indexList() {
+        List<Item> list = new ArrayList<>();
+        list.add(new Item(1L, "小米手机7", "手机", "小米", 3299.00, "http://image.leyou.com/13123.jpg"));
+        list.add(new Item(2L, "坚果手机R1", "手机", "锤子", 3699.00, "http://image.leyou.com/13123.jpg"));
+        list.add(new Item(3L, "华为META10", "手机", "华为", 4499.00, "http://image.leyou.com/13123.jpg"));
+        list.add(new Item(4L, "小米Mix2S", "手机", "小米", 4299.00, "http://image.leyou.com/13123.jpg"));
+        list.add(new Item(5L, "荣耀V10", "手机", "华为", 2799.00, "http://image.leyou.com/13123.jpg"));
+        // 接收对象集合，实现批量新增
+        itemRepository.saveAll(list);
+    }
 }
 
 
