@@ -5,12 +5,17 @@ import cn.itcast.elasticsearch.pojo.Item;
 import org.elasticsearch.index.query.FuzzyQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
@@ -46,7 +51,7 @@ public class ElasticsearchTest {
         this.itemRepository.saveAll(list);*/
 
         // 更新数据，只要id一样，自动覆盖
-        Item item = new Item(6L, "apple手机", " 手机",
+        Item item = new Item(6L, "apple手机", "手机",
                 "apple", 3599.00, "http://image.leyou.com/13123.jpg");
         this.itemRepository.save(item);
     }
@@ -99,6 +104,35 @@ public class ElasticsearchTest {
         items.forEach(System.out::println);
     }
 
+    @Test
+    public void testNative(){
+        // 构建自定义查询构建器
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        // 添加基本的查询条件
+        queryBuilder.withQuery(QueryBuilders.matchQuery("title", "手机"));
+        // 执行查询获取分页结果集，不分页的话默认是一页
+        Page<Item> itemPage = this.itemRepository.search(queryBuilder.build());
+        System.out.println(itemPage.getTotalPages());
+        System.out.println(itemPage.getTotalElements());
+        itemPage.getContent().forEach(System.out::println);
+    }
+
+    @Test
+    public void testPage(){
+        // 构建自定义查询构建器
+        NativeSearchQueryBuilder queryBuilder = new NativeSearchQueryBuilder();
+        // 添加基本的查询条件
+        queryBuilder.withQuery(QueryBuilders.matchQuery("category", "手机"));
+        // 添加分页条件, 页码是从0开始的
+        // queryBuilder.withPageable(PageRequest.of(1, 2));
+        // 添加排序
+        queryBuilder.withSort(SortBuilders.fieldSort("price").order(SortOrder.DESC));
+        // 执行查询获取分页结果集，不分页的话默认是一页
+        Page<Item> itemPage = this.itemRepository.search(queryBuilder.build());
+        System.out.println(itemPage.getTotalPages());
+        System.out.println(itemPage.getTotalElements());
+        itemPage.getContent().forEach(System.out::println);
+    }
 }
 
 
