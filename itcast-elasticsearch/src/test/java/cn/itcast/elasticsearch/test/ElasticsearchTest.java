@@ -2,6 +2,9 @@ package cn.itcast.elasticsearch.test;
 
 import cn.itcast.elasticsearch.ItemRepository;
 import cn.itcast.elasticsearch.pojo.Item;
+import org.elasticsearch.index.query.FuzzyQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +46,8 @@ public class ElasticsearchTest {
         this.itemRepository.saveAll(list);*/
 
         // 更新数据，只要id一样，自动覆盖
-        Item item = new Item(1L, "小米手机8", " 手机",
-                "小米", 3599.00, "http://image.leyou.com/13123.jpg");
+        Item item = new Item(6L, "apple手机", " 手机",
+                "apple", 3599.00, "http://image.leyou.com/13123.jpg");
         this.itemRepository.save(item);
     }
 
@@ -81,6 +84,21 @@ public class ElasticsearchTest {
         // 接收对象集合，实现批量新增
         itemRepository.saveAll(list);
     }
+
+    @Test
+    public void testSearch(){
+        /*// 通过查询构建器工具构建查询条件
+        MatchQueryBuilder queryBuilder = QueryBuilders.matchQuery("title", "手机");
+        // 执行查询，获取结果集
+        Iterable<Item> items = this.itemRepository.search(queryBuilder);
+        items.forEach(System.out::println);*/
+
+        // 模糊查询
+        FuzzyQueryBuilder queryBuilder = QueryBuilders.fuzzyQuery("title", "appla");
+        Iterable<Item> items = this.itemRepository.search(queryBuilder);
+        items.forEach(System.out::println);
+    }
+
 }
 
 
